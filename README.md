@@ -41,19 +41,19 @@ Once you finish adding columns and rows to the table, you can save it to file.
 Save table to "example.txt". Will create a file if it doesn't exist, otherwise returns an error.
 
 ```python
-example.generate("example.txt")
+example.save("example.txt")
 #or;
-example.generate("example.txt", fileMode="x")
+example.save("example.txt", fileMode="x")
 ```
 
 Append table to "example.txt";
 
 ```python
-example.generate("example.txt", fileMode="a")
+example.save("example.txt", fileMode="a")
 ```
 
 Save table to "example.txt", and overwrite it if it already exists;
 
 ```python
-example.generate("example.txt", fileMode="w")
+example.save("example.txt", fileMode="w")
 ```

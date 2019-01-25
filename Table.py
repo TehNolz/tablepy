@@ -25,12 +25,10 @@ class table:
 		"""
 		if len(self.columns) == 0:
 			raise TableError("Cannot add rows to a table with no columns.")
-		elif len(items) > len(self.columns):
-			raise TableError("Too many items in row.")
 
 		self.rows.append(items)
 
-	def generate(self, file, **kwargs):
+	def save(self, file, **kwargs):
 		"""
 		Writes the table to file.
 
@@ -68,6 +66,10 @@ class table:
 			for item in range(len(row)):
 				spaceCount = self.widths[item] - len(row[item])
 				tableString += "| " + str(row[item]) + " "*spaceCount
+			if len(row) < len(self.columns):
+				for item in range(len(row), len(self.columns)):
+					tableString += "| " + " "*self.widths[item]
+
 			tableString+= "|\n"
 
 		outputFile.write(tableString)
@@ -84,4 +86,5 @@ def findLargestMultiple(num, multiple):
 tableTest = table()
 tableTest.setColumns("1", "2", "3", "455555555555555555555")
 tableTest.addRow("a", "b", "c", "d")
-tableTest.generate("test.txt", fileMode="w")
+tableTest.addRow("a")
+tableTest.save("test.txt", fileMode="w")
