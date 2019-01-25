@@ -74,6 +74,19 @@ class table:
 
 		outputFile.write(tableString)
 
+	def sort(self, column, ascending=False):
+		"""
+		Sort a column.
+
+		Args;
+			ascending	-	If true, will sort ascending instead of descending
+		"""
+		if column not in self.columns:
+				raise TableError("No such column: "+str(column))
+
+		column = self.columns.index(column)
+		self.rows = sorted(self.rows, key=lambda item: item[column], reverse=ascending)
+
 class TableError(ValueError):
 	pass
 
@@ -81,10 +94,3 @@ def findLargestMultiple(num, multiple):
 	var = num % multiple
 	num+= multiple-var
 	return num
-
-#Example
-tableTest = table()
-tableTest.setColumns("1", "2", "3", "455555555555555555555")
-tableTest.addRow("a", "b", "c", "d")
-tableTest.addRow("a")
-tableTest.save("test.txt", fileMode="w")

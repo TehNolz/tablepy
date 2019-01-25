@@ -32,6 +32,23 @@ Add rows;
 
 ```python
 example.addRow("a", "b", "c", "d")
+example.addRow("green", "blue", "yellow", "red")
+```
+
+### Sort
+
+Sort the table by the specified column, either ascending or descending. Default is descending.
+
+```python
+example.sort("1")
+#or
+example.sort("1", ascending=False)
+```
+
+Ascending;
+
+```python
+example.sort("1", ascending=True)
 ```
 
 ### Saving
