@@ -34,43 +34,71 @@ class table:
 
 		Args;
 			<file>		-	File to write table to.
-			[fileMode]	-	Whether to append, overwrite or create a file.
+			[fileMode]	-	Whether to append, overwrite or create a file. Defaults to x.
+				x	-	Create. Throws an error if file already exists,
+				a	-	Append. Creates a file if it doesn't exist,
+				w	-	Write. Overwrites the file, or creates it if it doesn't already exist.
+			[tableType]	-	The formatting used for the table. Defaults to ASCII.
+				ASCII	- Simple text.
+				Reddit	- A table using Reddit's markdown.
+			[alignment]	-	Reddit mode only. List of "L", "R", and/or "C", used to specify the column alignment.
 		"""
-		padding = kwargs.get("padding", 1)
 		fileMode = kwargs.get("fileMode", "x")
+		tableType = kwargs.get("tableType", "ASCII")
+		alignment = kwargs.get("alignment", None)
+
 		outputFile = open(file, fileMode)
 		
 		###Calculate column widths
 		#Find initial column widths
 		for column in self.columns:
-			width = findLargestMultiple(len(column)+padding+1, 4)
+			width = findLargestMultiple(len(column)+1, 4)
 			self.widths.append(width)
 
-		#Find item widths
-		for row in self.rows:
-			for item in range(len(row)):
-				if len(row[item])+1 > self.widths[item]:
-					self.widths[item] = findLargestMultiple(len(row[item]), 4)
+		if tableType.lower() == "ASCII".lower():
+			#Find item widths
+			for row in self.rows:
+				for item in range(len(row)):
+					if len(row[item])+1 > self.widths[item]:
+						self.widths[item] = findLargestMultiple(len(row[item]), 4)
 
-		#Draw table
-		line = "-"*(sum(self.widths)+len(self.columns)+5)+"\n"
-		tableString = "" + line
-		for column in range(len(self.columns)):
-			spaceCount = self.widths[column]
-			spaceCount-= len(self.columns[column])
-			tableString += "| " + self.columns[column] + " "*spaceCount
-		tableString+= "|\n"
-		tableString+= line
-
-		for row in self.rows:
-			for item in range(len(row)):
-				spaceCount = self.widths[item] - len(row[item])
-				tableString += "| " + str(row[item]) + " "*spaceCount
-			if len(row) < len(self.columns):
-				for item in range(len(row), len(self.columns)):
-					tableString += "| " + " "*self.widths[item]
-
+			#Draw table
+			line = "-"*(sum(self.widths)+len(self.columns)+5)+"\n"
+			tableString = "" + line
+			for column in range(len(self.columns)):
+				spaceCount = self.widths[column]
+				spaceCount-= len(self.columns[column])
+				tableString += "| " + self.columns[column] + " "*spaceCount
 			tableString+= "|\n"
+			tableString+= line
+
+			for row in self.rows:
+				for item in range(len(row)):
+					spaceCount = self.widths[item] - len(row[item])
+					tableString += "| " + str(row[item]) + " "*spaceCount
+				if len(row) < len(self.columns):
+					for item in range(len(row), len(self.columns)):
+						tableString += "| " + " "*self.widths[item]
+
+				tableString+= "|\n"
+
+		elif tableType.lower() == "Reddit".lower():
+			#Create tablestring. Spaces are irrelevant because Reddit does that for us.
+			tableString = "|"
+			header1 = header2 = ""
+			if alignment == None:
+				alignment = [":--|" for x in range(len(self.columns))]
+
+			for i in range(len(self.columns)):
+				header1+= ("**"+self.columns[i]+"**|")
+				header2+=alignment[i]
+			tableString+= header1 +"\n" + header2 + "\n"
+			for row in self.rows:
+				tableString+="|"
+				for item in row:
+					tableString+= (item+"|")
+				tableString+="\n"
+
 
 		outputFile.write(tableString)
 
